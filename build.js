@@ -13,7 +13,8 @@ const filesToCopy = [
   'ah-logo.png',
   'annamalai-branches.jpg',
   'annamalai-brand.png',
-  'temple-hero-bg.jpg'
+  'temple-hero-bg.jpg',
+  'arunachala-bg.jpg'
 ];
 
 filesToCopy.forEach(file => {
