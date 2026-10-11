@@ -1,0 +1,10 @@
+{
+  "name": "annamalai-hotel",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Annamalai Hotel Residency - Luxury Hospitality Website",
+  "scripts": {
+    "build": "node build.js",
+    "start": "node build.js"
+  }
+}
