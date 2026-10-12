@@ -79,6 +79,28 @@
       scroll-behavior: smooth;
       width: 100%;
       max-width: 100%;
+      /* Mobile fix: decorative blobs/blur layers must never widen the page */
+      overflow-x: hidden;
+      overflow-x: clip;
+    }
+
+    body {
+      overflow-x: hidden;
+      overflow-x: clip;
+    }
+
+    section, footer, header, main {
+      overflow-x: clip;
+      max-width: 100%;
+    }
+
+    /* Side drawer: let flex children shrink so long titles wrap instead of overflowing */
+    #side-menu-drawer {
+      max-width: 100vw;
+      overflow-x: hidden;
+    }
+    #side-menu-drawer nav a > div {
+      min-width: 0;
     }
 
     body {
