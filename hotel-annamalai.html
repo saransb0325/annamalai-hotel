@@ -1186,161 +1186,65 @@
   <!-- SPLIT SCREEN WINDOW TYPE GALLERY MODAL     -->
   <!-- ========================================== -->
   <div id="split-gallery-window" class="fixed inset-0 z-50 hidden flex items-center justify-center p-2 sm:p-4 lg:p-6 bg-black/95 backdrop-blur-2xl transition-all duration-300" onclick="closeSplitGalleryWindow(event)">
-    
-    <!-- Outer Window Frame -->
-    <div class="relative w-full max-w-7xl h-[94vh] sm:h-[90vh] bg-[#120F0D] border-2 border-[#E5A93C]/40 rounded-2xl sm:rounded-3xl shadow-[0_25px_80px_rgba(0,0,0,0.95)] flex flex-col overflow-hidden" onclick="event.stopPropagation()">
-      
-      <!-- Window Top Header Bar (Desktop & Mobile) -->
-      <header class="px-4 sm:px-6 py-3.5 bg-[#171310] border-b border-[#E5A93C]/25 flex items-center justify-between shrink-0">
-        
-        <!-- Window Controls & Branding -->
-        <div class="flex items-center space-x-3 sm:space-x-4">
-          <!-- Window Dots -->
-          <div class="flex items-center space-x-1.5 shrink-0">
-            <span onclick="closeSplitGalleryWindow()" class="w-3.5 h-3.5 rounded-full bg-red-500 hover:bg-red-600 transition-colors cursor-pointer inline-block shadow-sm" title="Close Window"></span>
-            <span class="w-3.5 h-3.5 rounded-full bg-amber-500/80 inline-block"></span>
-            <span class="w-3.5 h-3.5 rounded-full bg-emerald-500/80 inline-block"></span>
-          </div>
 
-          <!-- Vertical Divider -->
-          <div class="h-5 w-px bg-stone-700 hidden sm:block"></div>
+    <div class="relative w-full max-w-6xl h-[94vh] sm:h-[90vh] bg-[#120F0D] border border-[#E5A93C]/40 rounded-2xl shadow-[0_25px_80px_rgba(0,0,0,0.95)] flex flex-col overflow-hidden" onclick="event.stopPropagation()">
 
-          <!-- Emblem & Title -->
-          <div class="flex items-center space-x-2.5">
-            <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-[#E5A93C] to-[#992815] p-0.5 shrink-0 hidden sm:flex items-center justify-center">
-              <span class="text-[10px] font-serif font-black text-[#0F0E0C]">AH</span>
-            </div>
-            <div>
-              <div class="flex items-center space-x-2">
-                <h3 class="font-serif font-bold text-white text-sm sm:text-base tracking-wide leading-none">ANNAMALAI HOTEL RESIDENCY</h3>
-                <span class="px-2 py-0.5 rounded-full bg-[#E5A93C]/20 border border-[#E5A93C]/40 text-[#F6C453] text-[10px] font-mono uppercase tracking-widest hidden md:inline-block">Photo Gallery Window</span>
-              </div>
-              <span class="text-[10px] text-stone-400 block sm:hidden">Split-Screen Photo Gallery</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Right Side: Counter & Actions -->
-        <div class="flex items-center space-x-2 sm:space-x-3">
-          <!-- Photo Counter Badge -->
-          <div class="px-3 py-1 rounded-full bg-[#0F0E0C] border border-[#E5A93C]/30 text-xs font-mono text-[#F6C453] flex items-center space-x-1">
-            <span class="text-stone-400 text-[10px]">PHOTO</span>
-            <span id="split-gallery-counter" class="font-bold">1 / 12</span>
-          </div>
-
-          <!-- Quick Book Room Button -->
-          <button onclick="closeSplitGalleryWindow(); openBookingModal();" class="hidden sm:inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-[#992815] to-[#B33418] hover:brightness-110 text-white font-serif text-xs font-bold transition-all shadow-md cursor-pointer border border-[#E5A93C]/30">
-            <span>🛎️</span>
-            <span>Book Room</span>
-          </button>
-
-          <!-- Close Window Button -->
-          <button onclick="closeSplitGalleryWindow()" class="p-2 sm:px-3 sm:py-1.5 rounded-xl bg-stone-800/80 hover:bg-[#992815] text-stone-300 hover:text-white transition-all cursor-pointer flex items-center space-x-1.5 border border-stone-700" title="Close Window (Esc)">
+      <!-- Header -->
+      <header class="px-4 sm:px-6 py-3 bg-[#171310] border-b border-[#E5A93C]/25 flex items-center justify-between shrink-0">
+        <h3 class="font-serif font-bold text-white text-base sm:text-lg">Photo Gallery</h3>
+        <div class="flex items-center space-x-3">
+          <span id="split-gallery-counter" class="text-sm font-mono text-[#F6C453]">1 / 12</span>
+          <button onclick="closeSplitGalleryWindow()" class="p-2 rounded-full bg-stone-800/80 hover:bg-[#992815] text-stone-300 hover:text-white transition-all cursor-pointer border border-stone-700" aria-label="Close gallery" title="Close (Esc)">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-            <span class="text-xs font-serif hidden sm:inline">Close</span>
           </button>
         </div>
       </header>
 
-      <!-- Window Split-Screen Body -->
       <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 min-h-0 overflow-y-auto lg:overflow-hidden">
-        
-        <!-- ============================================== -->
-        <!-- LEFT PANE: ACTIVE PHOTO PREVIEW STAGE (7 cols) -->
-        <!-- ============================================== -->
-        <section class="lg:col-span-8 flex flex-col relative bg-black/90 min-h-0 border-b lg:border-b-0 lg:border-r border-stone-800 overflow-hidden" aria-label="Selected Photo Preview">
-          
-          <!-- Large High-Res Photo Viewport -->
-          <div class="flex-1 relative flex items-center justify-center overflow-hidden p-3 sm:p-6 select-none bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-stone-900/60 via-black to-black">
-            
-            <!-- Previous Button -->
-            <button onclick="prevSplitGalleryImage()" class="absolute left-3 sm:left-6 z-20 w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-black/70 hover:bg-[#E5A93C] text-stone-200 hover:text-black border border-white/20 hover:border-[#E5A93C] backdrop-blur-md flex items-center justify-center transition-all duration-200 shadow-2xl active:scale-95 cursor-pointer group" aria-label="Previous image">
-              <svg class="w-6 h-6 transform group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+
+        <!-- Selected photo -->
+        <section class="lg:col-span-8 flex flex-col relative bg-black/90 min-h-0 border-b lg:border-b-0 lg:border-r border-stone-800 overflow-hidden" aria-label="Selected photo">
+          <div class="flex-1 relative flex items-center justify-center overflow-hidden p-3 sm:p-6 select-none">
+            <button onclick="prevSplitGalleryImage()" class="absolute left-3 sm:left-6 z-20 w-10 h-10 rounded-full bg-black/70 hover:bg-[#E5A93C] text-stone-200 hover:text-black border border-white/20 flex items-center justify-center transition-all cursor-pointer" aria-label="Previous photo">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
             </button>
-
-            <!-- Main Stage Image -->
-            <div class="relative max-w-full max-h-full flex items-center justify-center">
-              <img id="split-active-img" src="" alt="Annamalai Hotel Showcase" class="max-w-full max-h-[46vh] sm:max-h-[58vh] lg:max-h-[66vh] object-contain rounded-xl sm:rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.9)] transition-all duration-300">
-            </div>
-
-            <!-- Next Button -->
-            <button onclick="nextSplitGalleryImage()" class="absolute right-3 sm:right-6 z-20 w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-black/70 hover:bg-[#E5A93C] text-stone-200 hover:text-black border border-white/20 hover:border-[#E5A93C] backdrop-blur-md flex items-center justify-center transition-all duration-200 shadow-2xl active:scale-95 cursor-pointer group" aria-label="Next image">
-              <svg class="w-6 h-6 transform group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+            <img id="split-active-img" src="" alt="Annamalai Hotel" class="max-w-full max-h-[40vh] sm:max-h-[55vh] lg:max-h-[64vh] object-contain rounded-xl transition-all duration-300">
+            <button onclick="nextSplitGalleryImage()" class="absolute right-3 sm:right-6 z-20 w-10 h-10 rounded-full bg-black/70 hover:bg-[#E5A93C] text-stone-200 hover:text-black border border-white/20 flex items-center justify-center transition-all cursor-pointer" aria-label="Next photo">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
             </button>
           </div>
 
-          <!-- Bottom Stage Info Bar -->
-          <div class="p-4 sm:p-5 bg-[#14110E] border-t border-stone-800/90 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shrink-0">
-            <div class="space-y-1 max-w-xl">
-              <div class="flex items-center space-x-2">
-                <span id="split-active-category" class="px-2.5 py-0.5 rounded-md text-[10px] font-serif uppercase tracking-widest font-bold bg-[#E5A93C]/20 text-[#F6C453] border border-[#E5A93C]/35">Suites & Rooms</span>
-                <span id="split-active-tariff" class="text-xs font-mono text-[#E5A93C] font-semibold">₹2,519 / Night</span>
+          <div class="p-4 sm:p-5 bg-[#14110E] border-t border-stone-800/90 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0">
+            <div class="space-y-1 min-w-0">
+              <div class="flex items-center space-x-2 text-xs">
+                <span id="split-active-category" class="text-[#E5A93C] font-serif font-bold uppercase tracking-wider"></span>
+                <span class="text-stone-600">•</span>
+                <span id="split-active-tariff" class="font-mono text-stone-300"></span>
               </div>
-              <h4 id="split-active-title" class="font-serif text-lg sm:text-2xl font-bold text-white tracking-tight">Deluxe King Sanctuary</h4>
-              <p id="split-active-desc" class="text-xs sm:text-sm text-stone-300 leading-snug line-clamp-2">Posturepedic Mattress • Split AC • 43" Smart LED TV</p>
+              <h4 id="split-active-title" class="font-serif text-lg sm:text-xl font-bold text-white"></h4>
+              <p id="split-active-desc" class="text-sm text-stone-400 leading-snug line-clamp-2"></p>
             </div>
-
-            <!-- Stage Booking / Action CTA -->
-            <div class="flex items-center space-x-2 shrink-0 w-full sm:w-auto pt-1 sm:pt-0">
-              <button onclick="closeSplitGalleryWindow(); openBookingModal();" class="flex-1 sm:flex-initial px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#992815] to-[#E5A93C] hover:brightness-110 text-white font-serif text-xs font-bold uppercase tracking-wider shadow-lg active:scale-95 transition-all cursor-pointer flex items-center justify-center space-x-2">
-                <span>🛎️ Book / Enquire Room</span>
-              </button>
-            </div>
+            <button onclick="closeSplitGalleryWindow(); openBookingModal();" class="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#992815] to-[#E5A93C] hover:brightness-110 text-white font-serif text-sm font-bold shadow-lg active:scale-95 transition-all cursor-pointer shrink-0">
+              Book Now
+            </button>
           </div>
         </section>
 
-        <!-- ======================================================== -->
-        <!-- RIGHT PANE: INSIDE THE WINDOW THE IMAGES KEPT (5 cols)   -->
-        <!-- ======================================================== -->
-        <aside class="lg:col-span-4 flex flex-col bg-[#16120E] min-h-0 overflow-hidden" aria-label="Inside Window Image Collection">
-          
-          <!-- Pane Top Header with Category Filter Chips -->
-          <div class="p-4 border-b border-stone-800/90 bg-[#120F0D] shrink-0 space-y-2.5">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center space-x-2">
-                <span class="w-2 h-2 rounded-full bg-[#E5A93C] animate-pulse"></span>
-                <h4 class="font-serif text-xs uppercase tracking-widest text-[#E5A93C] font-bold">Images Kept In Window</h4>
-              </div>
-              <span id="split-collection-count" class="text-[11px] font-mono text-stone-400 bg-stone-900 px-2 py-0.5 rounded border border-stone-800">12 Photos</span>
-            </div>
-
-            <!-- Quick Filter Chips Inside Window -->
-            <div class="flex flex-wrap items-center gap-1.5 pt-1" id="split-filter-tabs">
-              <button onclick="filterSplitCategory('all')" data-cat="all" class="split-cat-btn active px-3 py-1 rounded-full text-[11px] font-serif font-bold uppercase tracking-wider bg-[#E5A93C] text-[#0F0E0C] border border-[#E5A93C] transition-all cursor-pointer">
-                All
-              </button>
-              <button onclick="filterSplitCategory('rooms')" data-cat="rooms" class="split-cat-btn px-3 py-1 rounded-full text-[11px] font-serif font-semibold uppercase tracking-wider bg-[#1B1713] text-stone-300 hover:text-white border border-stone-800 hover:border-[#E5A93C]/50 transition-all cursor-pointer">
-                Suites
-              </button>
-              <button onclick="filterSplitCategory('dining')" data-cat="dining" class="split-cat-btn px-3 py-1 rounded-full text-[11px] font-serif font-semibold uppercase tracking-wider bg-[#1B1713] text-stone-300 hover:text-white border border-stone-800 hover:border-[#E5A93C]/50 transition-all cursor-pointer">
-                Dining
-              </button>
-              <button onclick="filterSplitCategory('banquet')" data-cat="banquet" class="split-cat-btn px-3 py-1 rounded-full text-[11px] font-serif font-semibold uppercase tracking-wider bg-[#1B1713] text-stone-300 hover:text-white border border-stone-800 hover:border-[#E5A93C]/50 transition-all cursor-pointer">
-                Banquets
-              </button>
-              <button onclick="filterSplitCategory('facilities')" data-cat="facilities" class="split-cat-btn px-3 py-1 rounded-full text-[11px] font-serif font-semibold uppercase tracking-wider bg-[#1B1713] text-stone-300 hover:text-white border border-stone-800 hover:border-[#E5A93C]/50 transition-all cursor-pointer">
-                Facilities
-              </button>
+        <!-- Photo list -->
+        <aside class="lg:col-span-4 flex flex-col bg-[#16120E] min-h-0 overflow-hidden" aria-label="All photos">
+          <div class="p-3 border-b border-stone-800/90 bg-[#120F0D] shrink-0">
+            <div class="flex flex-wrap items-center gap-1.5" id="split-filter-tabs">
+              <button onclick="filterSplitCategory('all')" data-cat="all" class="split-cat-btn active px-3 py-1.5 rounded-full text-xs font-serif font-semibold bg-[#E5A93C] text-[#0F0E0C] border-[#E5A93C] border transition-all cursor-pointer">All</button>
+              <button onclick="filterSplitCategory('rooms')" data-cat="rooms" class="split-cat-btn px-3 py-1.5 rounded-full text-xs font-serif font-semibold bg-[#1B1713] text-stone-300 hover:text-white border-stone-800 hover:border-[#E5A93C]/50 border transition-all cursor-pointer">Rooms</button>
+              <button onclick="filterSplitCategory('dining')" data-cat="dining" class="split-cat-btn px-3 py-1.5 rounded-full text-xs font-serif font-semibold bg-[#1B1713] text-stone-300 hover:text-white border-stone-800 hover:border-[#E5A93C]/50 border transition-all cursor-pointer">Dining</button>
+              <button onclick="filterSplitCategory('banquet')" data-cat="banquet" class="split-cat-btn px-3 py-1.5 rounded-full text-xs font-serif font-semibold bg-[#1B1713] text-stone-300 hover:text-white border-stone-800 hover:border-[#E5A93C]/50 border transition-all cursor-pointer">Banquets</button>
+              <button onclick="filterSplitCategory('facilities')" data-cat="facilities" class="split-cat-btn px-3 py-1.5 rounded-full text-xs font-serif font-semibold bg-[#1B1713] text-stone-300 hover:text-white border-stone-800 hover:border-[#E5A93C]/50 border transition-all cursor-pointer">Facilities</button>
             </div>
           </div>
-
-          <!-- Scrollable Collection of Images Kept Inside Window -->
-          <div id="split-thumbnails-list" class="flex-1 overflow-y-auto p-3 sm:p-4 space-y-2.5 divide-y divide-stone-800/40">
-            <!-- Dynamically populated via renderSplitThumbnails() -->
-          </div>
-
-          <!-- Pane Footer Keyboard & Navigation Guide -->
-          <div class="p-3 bg-[#110E0C] border-t border-stone-800/80 text-center shrink-0">
-            <span class="text-[11px] text-stone-400 flex items-center justify-center space-x-1.5">
-              <span>⌨️</span>
-              <span>Use <kbd class="px-1.5 py-0.5 bg-stone-800 rounded text-stone-300 font-mono text-[10px]">←</kbd> <kbd class="px-1.5 py-0.5 bg-stone-800 rounded text-stone-300 font-mono text-[10px]">→</kbd> keys to browse • <kbd class="px-1.5 py-0.5 bg-stone-800 rounded text-stone-300 font-mono text-[10px]">Esc</kbd> to exit</span>
-            </span>
-          </div>
-
+          <div id="split-thumbnails-list" class="flex-1 overflow-y-auto p-3 space-y-2"></div>
         </aside>
 
       </div>
-
     </div>
   </div>
 
@@ -1822,7 +1726,7 @@
             <li>
               <a href="javascript:void(0)" onclick="openSplitGalleryWindow(0)" class="text-[#F6C453] hover:text-white hover:translate-x-1 transition-all inline-flex items-center space-x-2 font-bold cursor-pointer">
                 <span>🗔</span>
-                <span>Photo Gallery (Split Window)</span>
+                <span>Photo Gallery</span>
               </a>
             </li>
             <li>
@@ -2278,123 +2182,123 @@
     const splitGalleryData = [
   {
     "id": 0,
-    "title": "Deluxe King Sanctuary",
-    "category": "Suites & Rooms",
+    "title": "Deluxe King Room",
+    "category": "Rooms",
     "catKey": "rooms",
-    "desc": "Plush Posturepedic King mattress, silent split air-conditioning, 43\" Smart LED TV, premium cotton linens & 24/7 in-room dining.",
+    "desc": "King bed, air conditioning, smart TV and 24/7 room service.",
     "thumb": "https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=400&q=80",
     "full": "https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=1400&q=85",
-    "tariff": "₹2,519 / Night"
+    "tariff": "₹2,519 per night"
   },
   {
     "id": 1,
-    "title": "Executive Twin Suite",
-    "category": "Suites & Rooms",
+    "title": "Executive Twin Room",
+    "category": "Rooms",
     "catKey": "rooms",
-    "desc": "Spacious twin ergonomic bedding, dedicated workstation with high-speed Wi-Fi, ambient reading sconces & hot shower bath.",
+    "desc": "Twin beds, work desk, free Wi-Fi and hot shower.",
     "thumb": "https://images.unsplash.com/photo-1591088398332-8a7791972843?auto=format&fit=crop&w=400&q=80",
     "full": "https://images.unsplash.com/photo-1591088398332-8a7791972843?auto=format&fit=crop&w=1400&q=85",
-    "tariff": "₹2,519 / Night"
+    "tariff": "₹2,519 per night"
   },
   {
     "id": 2,
-    "title": "Authentic Cow Ghee Roast Dosa",
-    "category": "Pure Veg Dining",
+    "title": "Ghee Roast Dosa",
+    "category": "Dining",
     "catKey": "dining",
-    "desc": "Crispy golden texture prepared with pure country cow ghee, served piping hot with 3 fresh homemade coconut chutneys & aromatic sambar.",
+    "desc": "Crispy dosa made with pure ghee, served with chutneys and sambar.",
     "thumb": "https://images.unsplash.com/photo-1668236543090-82eba5ee5976?auto=format&fit=crop&w=400&q=80",
     "full": "https://images.unsplash.com/photo-1668236543090-82eba5ee5976?auto=format&fit=crop&w=1400&q=85",
-    "tariff": "Signature Dish"
+    "tariff": ""
   },
   {
     "id": 3,
-    "title": "Traditional Elai Saapadu (Royal Thali)",
-    "category": "Pure Veg Dining",
+    "title": "Banana Leaf Meals",
+    "category": "Dining",
     "catKey": "dining",
-    "desc": "Grand banana leaf feast featuring Ponni steamed rice, drumstick sambar, pepper rasam, kootu, poriyal, appalam, vadai & warm payasam.",
+    "desc": "Full South Indian meal served on a banana leaf.",
     "thumb": "https://images.unsplash.com/photo-1610057099443-fde8c4d50f91?auto=format&fit=crop&w=400&q=80",
     "full": "https://images.unsplash.com/photo-1610057099443-fde8c4d50f91?auto=format&fit=crop&w=1400&q=85",
-    "tariff": "Unlimited Feast"
+    "tariff": ""
   },
   {
     "id": 4,
-    "title": "Annamalai Grand Banquet Hall",
-    "category": "Banquets & Halls",
+    "title": "Banquet Hall",
+    "category": "Banquets",
     "catKey": "banquet",
-    "desc": "Centrally air-conditioned grand celebratory hall accommodating 500+ guests for auspicious weddings, family receptions & corporate conclaves.",
+    "desc": "Air-conditioned hall for 500+ guests. Ideal for weddings and events.",
     "thumb": "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=400&q=80",
     "full": "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=1400&q=85",
-    "tariff": "500+ Capacity"
+    "tariff": "500+ guests"
   },
   {
     "id": 5,
-    "title": "Grand Temple View Suite",
-    "category": "Suites & Rooms",
+    "title": "Temple View Suite",
+    "category": "Rooms",
     "catKey": "rooms",
-    "desc": "Floor-to-ceiling panoramic views across Villupuram towards the holy Arunachala horizon, plush lounge seating & welcome tea tray.",
+    "desc": "Large windows with city views, lounge seating and welcome tea.",
     "thumb": "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&w=400&q=80",
     "full": "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&w=1400&q=85",
-    "tariff": "₹3,499 / Night"
+    "tariff": "₹3,499 per night"
   },
   {
     "id": 6,
-    "title": "Presidential Family Suite",
-    "category": "Suites & Rooms",
+    "title": "Family Suite",
+    "category": "Rooms",
     "catKey": "rooms",
-    "desc": "Expansive 4-guest suite featuring dual king bedrooms, interconnecting lounge, two private ensuite bathrooms & mini refrigerator.",
+    "desc": "Two king bedrooms and a lounge. Fits up to 4 guests.",
     "thumb": "https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=400&q=80",
     "full": "https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1400&q=85",
-    "tariff": "₹4,299 / Night"
+    "tariff": "₹4,299 per night"
   },
   {
     "id": 7,
-    "title": "Annamalai Hotel Pure Veg Restaurant",
-    "category": "Pure Veg Dining",
+    "title": "Pure Veg Restaurant",
+    "category": "Dining",
     "catKey": "dining",
-    "desc": "100% Pure vegetarian culinary haven. Air-conditioned family dining hall serving time-honored South & North Indian gourmet dishes.",
+    "desc": "Air-conditioned family dining with South and North Indian dishes.",
     "thumb": "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=400&q=80",
     "full": "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1400&q=85",
-    "tariff": "Family Dining"
+    "tariff": ""
   },
   {
     "id": 8,
-    "title": "Kumbakonam Degree Filter Kaapi",
-    "category": "Pure Veg Dining",
+    "title": "Filter Coffee",
+    "category": "Dining",
     "catKey": "dining",
-    "desc": "Frothy, strong decoction blended with farm-fresh cow milk in traditional brass davara tumbler. The quintessential Tamil morning ritual.",
+    "desc": "Fresh filter coffee, served the traditional way.",
     "thumb": "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=400&q=80",
     "full": "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=1400&q=85",
-    "tariff": "Fresh Daily"
+    "tariff": ""
   },
   {
     "id": 9,
-    "title": "Sacred Arunachaleswarar Gopuram & Girivalam Circuit",
-    "category": "Facilities & Heritage",
+    "title": "Temple Travel Help",
+    "category": "Facilities",
     "catKey": "facilities",
-    "desc": "Sacred spiritual sanctuary corridor. Hotel front desk provides Tiruvannamalai temple darshan travel support and local cab arrangements.",
+    "desc": "Our front desk helps with Tiruvannamalai temple trips and cabs.",
     "thumb": "./public/assets/temple-hero-bg.jpg",
     "full": "./public/assets/temple-hero-bg.jpg",
-    "tariff": "Pilgrim Circuit"
+    "tariff": ""
   },
   {
     "id": 10,
-    "title": "Annamalai Groups — 5 Branches Across Villupuram",
-    "category": "Facilities & Heritage",
+    "title": "Our Branches",
+    "category": "Facilities",
     "catKey": "facilities",
-    "desc": "The trusted hospitality group with 5 premier branches in Villupuram: Chennai Highway Bypass, Railway Station, Old Bus Stand & Central Bazaar.",
+    "desc": "5 Annamalai branches across Villupuram.",
     "thumb": "./annamalai-branches.jpg",
     "full": "./annamalai-branches.jpg",
-    "tariff": "5 Branches"
+    "tariff": ""
   },
   {
     "id": 11,
-    "title": "Secure Multi-Car Parking & Fast EV Station",
-    "category": "Facilities & Heritage",
+    "title": "Parking & EV Charging",
+    "category": "Facilities",
     "catKey": "facilities",
-    "desc": "24/7 CCTV surveillance, spacious paved private parking lot for guest vehicles and highway EV fast charging stations.",
+    "desc": "Secure CCTV parking and fast EV charging.",
     "thumb": "https://images.unsplash.com/photo-1590381105924-c72589b9ef3f?auto=format&fit=crop&w=400&q=80",
     "full": "https://images.unsplash.com/photo-1590381105924-c72589b9ef3f?auto=format&fit=crop&w=1400&q=85",
-    "tariff": "Complimentary"
+    "tariff": "Free"
   }
 ];
 
@@ -2491,7 +2395,7 @@
       if (titleEl) titleEl.innerText = item.title;
       if (catEl) catEl.innerText = item.category;
       if (descEl) descEl.innerText = item.desc;
-      if (tariffEl) tariffEl.innerText = item.tariff || '';
+      if (tariffEl) { tariffEl.innerText = item.tariff || ''; if (tariffEl.previousElementSibling) tariffEl.previousElementSibling.style.display = item.tariff ? '' : 'none'; }
       if (counterEl) counterEl.innerText = (index + 1) + ' / ' + splitGalleryData.length;
     }
 
@@ -2504,28 +2408,15 @@
         currentSplitFilter === 'all' || img.catKey === currentSplitFilter
       );
 
-      if (countEl) {
-        countEl.innerText = visibleItems.length + ' Photos';
-      }
-
+      
       listContainer.innerHTML = visibleItems.map((item) => {
         const isActive = item.id === currentSplitIndex;
         return `
-          <div id="split-thumb-${item.id}" onclick="selectSplitGalleryImage(${item.id})" class="split-thumb-card group flex items-center space-x-3 p-2.5 rounded-xl border transition-all duration-200 cursor-pointer ${isActive ? 'bg-[#E5A93C]/15 border-[#E5A93C] shadow-[0_0_20px_rgba(229,169,60,0.25)]' : 'bg-[#181410] border-stone-800/80 hover:border-[#E5A93C]/50 hover:bg-[#201A14]'}" data-cat="${item.catKey}">
-            <div class="w-20 h-16 rounded-lg overflow-hidden shrink-0 border ${isActive ? 'border-[#E5A93C]' : 'border-stone-700/60'} relative">
-              <img src="${item.thumb}" alt="${item.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-              ${isActive ? '<span class="absolute bottom-0 inset-x-0 bg-[#E5A93C] text-[#0F0E0C] text-[9px] font-bold font-mono text-center tracking-wider py-0.5">ACTIVE</span>' : ''}
-            </div>
+          <div id="split-thumb-${item.id}" onclick="selectSplitGalleryImage(${item.id})" class="split-thumb-card group flex items-center space-x-3 p-2 rounded-xl border transition-all duration-200 cursor-pointer ${isActive ? 'bg-[#E5A93C]/15 border-[#E5A93C]' : 'bg-[#181410] border-stone-800/80'}">
+            <img src="${item.thumb}" alt="${item.title}" class="w-16 h-12 rounded-lg object-cover shrink-0">
             <div class="flex-1 min-w-0 text-left">
-              <div class="flex items-center justify-between gap-1 mb-0.5">
-                <span class="text-[9px] font-serif uppercase tracking-wider font-bold ${isActive ? 'text-[#F6C453]' : 'text-[#E5A93C]'} truncate">${item.category}</span>
-                <span class="text-[10px] font-mono text-stone-400 shrink-0">${item.tariff || ''}</span>
-              </div>
-              <h5 class="font-serif text-xs sm:text-sm font-bold ${isActive ? 'text-[#F6C453]' : 'text-white'} group-hover:text-[#F6C453] transition-colors truncate">${item.title}</h5>
-              <p class="text-[11px] text-stone-400 truncate mt-0.5">${item.desc}</p>
-            </div>
-            <div class="shrink-0 pl-1">
-              <svg class="w-4 h-4 ${isActive ? 'text-[#F6C453] translate-x-0.5' : 'text-stone-600 group-hover:text-stone-400'} transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+              <h5 class="font-serif text-sm font-bold text-white truncate">${item.title}</h5>
+              <p class="text-xs text-stone-400 truncate">${item.tariff || item.category}</p>
             </div>
           </div>
         `;
@@ -2536,14 +2427,14 @@
 
     function highlightActiveThumbnail(index) {
       document.querySelectorAll('.split-thumb-card').forEach(card => {
-        card.classList.remove('bg-[#E5A93C]/15', 'border-[#E5A93C]', 'shadow-[0_0_20px_rgba(229,169,60,0.25)]');
+        card.classList.remove('bg-[#E5A93C]/15', 'border-[#E5A93C]');
         card.classList.add('bg-[#181410]', 'border-stone-800/80');
       });
 
       const activeCard = document.getElementById('split-thumb-' + index);
       if (activeCard) {
         activeCard.classList.remove('bg-[#181410]', 'border-stone-800/80');
-        activeCard.classList.add('bg-[#E5A93C]/15', 'border-[#E5A93C]', 'shadow-[0_0_20px_rgba(229,169,60,0.25)]');
+        activeCard.classList.add('bg-[#E5A93C]/15', 'border-[#E5A93C]');
         activeCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       }
     }
@@ -2692,9 +2583,8 @@
           <div class="flex-1">
             <div class="flex items-center space-x-2">
               <span class="font-serif text-lg font-bold text-white group-hover:text-[#F6C453] transition-colors">Photo Gallery</span>
-              <span class="px-2 py-0.5 rounded-full bg-[#E5A93C]/20 text-[#F6C453] text-[10px] font-mono border border-[#E5A93C]/40">Split Window</span>
             </div>
-            <span class="text-xs text-[#E5A93C]">Open Interactive Split-Screen Photo Window</span>
+            <span class="text-xs text-[#E5A93C]">View rooms, dining & banquet photos</span>
           </div>
           <svg class="w-5 h-5 text-[#E5A93C] group-hover:text-[#F6C453] group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
         </a>
