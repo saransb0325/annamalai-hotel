@@ -18,6 +18,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Canvas Confetti CDN for Voucher Celebration -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <script>
     tailwind.config = {
@@ -1876,9 +1877,11 @@
       <div id="food-step-done" class="hidden flex-1 p-6 flex flex-col items-center justify-center text-center space-y-4">
         <div class="w-16 h-16 rounded-full bg-emerald-500/20 border border-emerald-400/50 flex items-center justify-center text-3xl">✓</div>
         <h3 class="font-serif text-xl font-bold text-white">Order placed</h3>
+        <p class="text-sm text-stone-400 -mt-2">Download your receipt and show it at the restaurant. Pay there.</p>
         <p class="text-sm text-stone-400">Order no. <span id="food-ref" class="text-[#F6C453] font-mono"></span></p>
         <div id="food-summary" class="w-full text-left text-sm text-stone-300 bg-[#161411] border border-stone-800 rounded-xl p-4 space-y-1"></div>
-        <a id="food-whatsapp-btn" href="#" target="_blank" rel="noopener" class="w-full py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-serif font-bold text-sm text-center transition-colors">Send order on WhatsApp</a>
+        <button type="button" onclick="downloadReceipt(lastFoodReceipt)" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#F6C453] via-[#E5A93C] to-[#D4AF37] text-[#0F0E0C] font-serif font-bold text-sm uppercase tracking-wider cursor-pointer hover:brightness-110 transition-all">Download Receipt (PDF)</button>
+        <a id="food-whatsapp-btn" href="#" target="_blank" rel="noopener" class="text-xs text-stone-400 hover:text-white underline">Also send to hotel on WhatsApp</a>
         <button type="button" onclick="closeFoodOrder()" class="text-sm text-stone-400 hover:text-white cursor-pointer">Close</button>
       </div>
     </div>
@@ -2044,11 +2047,11 @@
         </div>
 
         <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
-          <button onclick="window.print()" class="px-4 py-2.5 rounded-xl bg-stone-800 text-stone-200 text-xs font-semibold cursor-pointer">
-            Print / Save PDF
+          <button onclick="downloadReceipt(lastRoomReceipt)" class="px-5 py-2.5 rounded-xl bg-stone-800 hover:bg-stone-700 text-white text-xs font-semibold cursor-pointer border border-[#E5A93C]/40">
+            Download Receipt (PDF)
           </button>
-          <a id="voucher-whatsapp-btn" href="#" target="_blank" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-serif text-xs font-bold uppercase tracking-wider">
-            Send to WhatsApp Desk
+          <a id="voucher-whatsapp-btn" href="#" target="_blank" rel="noopener" class="text-xs text-stone-400 hover:text-white underline">
+            Also send to hotel on WhatsApp
           </a>
           <button onclick="closeBookingModal()" class="px-5 py-2.5 rounded-xl bg-[#E5A93C] text-[#0F0E0C] font-serif text-xs font-bold uppercase tracking-wider cursor-pointer">
             Done
@@ -2103,6 +2106,49 @@
       document.getElementById('modal-checkout').value = cOut;
 
       openBookingModal(selectedRoom);
+    }
+
+    // Receipt download (PDF, with plain-text fallback if the PDF library did not load)
+    let lastRoomReceipt = null, lastFoodReceipt = null;
+    function downloadReceipt(r) {
+      if (!r) return;
+      const rs = n => 'Rs. ' + Number(n).toLocaleString('en-IN');
+      const fileName = r.ref + '.pdf';
+      if (window.jspdf && window.jspdf.jsPDF) {
+        const doc = new window.jspdf.jsPDF({ unit: 'pt', format: 'a5' });
+        const W = doc.internal.pageSize.getWidth();
+        let y = 48;
+        doc.setFillColor(15, 14, 12); doc.rect(0, 0, W, 90, 'F');
+        doc.setTextColor(246, 196, 83); doc.setFont('helvetica', 'bold'); doc.setFontSize(16);
+        doc.text('HOTEL ANNAMALAI RESIDENCY', W / 2, 40, { align: 'center' });
+        doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(220, 220, 220);
+        doc.text('Villupuram, Tamil Nadu  |  Tel: +91 4146 222 555', W / 2, 58, { align: 'center' });
+        doc.setFontSize(11); doc.setTextColor(246, 196, 83);
+        doc.text(r.title.toUpperCase(), W / 2, 78, { align: 'center' });
+        y = 120; doc.setTextColor(30, 30, 30);
+        const row = (a, b, bold) => {
+          doc.setFont('helvetica', bold ? 'bold' : 'normal'); doc.setFontSize(10);
+          doc.text(String(a), 36, y);
+          doc.text(String(b), W - 36, y, { align: 'right' });
+          y += 18;
+        };
+        row('Reference', r.ref, true);
+        row('Date', r.date);
+        r.info.forEach(([a, b]) => row(a, b));
+        y += 4; doc.setDrawColor(200); doc.line(36, y, W - 36, y); y += 18;
+        r.lines.forEach(([a, b]) => row(a, rs(b).replace('Rs. -', '- Rs. ')));
+        y += 2; doc.line(36, y, W - 36, y); y += 20;
+        doc.setFontSize(12); row(r.totalLabel, rs(r.total), true);
+        y += 14; doc.setFont('helvetica', 'italic'); doc.setFontSize(9); doc.setTextColor(110, 110, 110);
+        doc.splitTextToSize(r.note, W - 72).forEach(t => { doc.text(t, 36, y); y += 13; });
+        doc.save(fileName);
+      } else {
+        const txt = ['HOTEL ANNAMALAI RESIDENCY', r.title, '', 'Reference: ' + r.ref, 'Date: ' + r.date]
+          .concat(r.info.map(([a, b]) => a + ': ' + b), [''], r.lines.map(([a, b]) => a + ': ' + rs(b)), ['', r.totalLabel + ': ' + rs(r.total), '', r.note]).join('\n');
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([txt], { type: 'text/plain' }));
+        a.download = r.ref + '.txt'; a.click();
+      }
     }
 
     // Book Here: choose Food or Room
@@ -2181,6 +2227,13 @@
       const ref = 'AH-FD-' + Math.floor(1000 + Math.random() * 9000);
       const text = lines.map(i => `${foodCart[i.id]} x ${i.name} - ₹${foodCart[i.id] * i.price}`).join('\n');
 
+      lastFoodReceipt = {
+        title: 'Food Order Receipt', ref, date: new Date().toLocaleString('en-IN'),
+        info: [['Name', name], ['Phone', phone], ['Order type', type]],
+        lines: lines.map(i => [foodCart[i.id] + ' x ' + i.name, foodCart[i.id] * i.price]),
+        totalLabel: 'Total to pay', total,
+        note: 'Please show this receipt at the restaurant. Payment is made at the hotel.'
+      };
       document.getElementById('food-ref').innerText = ref;
       document.getElementById('food-summary').innerHTML = lines.map(i =>
         `<div class="flex justify-between"><span>${foodCart[i.id]} × ${i.name}</span><span>₹${foodCart[i.id] * i.price}</span></div>`).join('') +
@@ -2254,6 +2307,27 @@
       const checkOut = document.getElementById('modal-checkout').value;
 
       const randomRef = 'AH-VPM-2026-' + Math.floor(1000 + Math.random() * 9000);
+      const roomSel = document.getElementById('modal-room-select');
+      const roomName = roomSel.options[roomSel.selectedIndex].text.replace(/\s*\(.*\)$/, '');
+      const roomsCount = Number(document.getElementById('modal-rooms-count').value || 1);
+      const nights = Math.max(1, Math.round((new Date(checkOut) - new Date(checkIn)) / 86400000)) || 1;
+      const basePrice = Number(roomSel.options[roomSel.selectedIndex].getAttribute('data-price') || 0);
+      const roomTotal = basePrice * nights * roomsCount;
+      const taxi = document.getElementById('modal-addon-taxi').checked ? 2200 : 0;
+      const early = document.getElementById('modal-addon-early').checked ? 500 : 0;
+      const sub = roomTotal + taxi + early;
+      const disc = Math.round(sub * 0.10);
+      const gstAmt = Math.round((sub - disc) * 0.12);
+      const roomLines = [[roomName + ' x ' + roomsCount + ' room, ' + nights + ' night(s)', roomTotal]];
+      if (taxi) roomLines.push(['Tiruvannamalai cab', taxi]);
+      if (early) roomLines.push(['Early check-in 9 AM', early]);
+      roomLines.push(['Direct booking discount (10%)', -disc], ['GST (12%)', gstAmt]);
+      lastRoomReceipt = {
+        title: 'Room Booking Receipt', ref: randomRef, date: new Date().toLocaleString('en-IN'),
+        info: [['Guest', guestName], ['Phone', guestPhone], ['Check-in', checkIn + ' (12:00 PM)'], ['Check-out', checkOut + ' (11:00 AM)']],
+        lines: roomLines, totalLabel: 'Amount payable at check-in', total: calculatedTotalAmount,
+        note: 'Free cancellation up to 24 hours before check-in. Please show this receipt at the front desk and carry a valid government photo ID.'
+      };
       document.getElementById('voucher-ref').innerText = randomRef;
       document.getElementById('voucher-name').innerText = guestName;
       document.getElementById('voucher-phone').innerText = guestPhone;
