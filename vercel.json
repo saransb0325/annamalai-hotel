@@ -11,6 +11,10 @@
       "destination": "/hotel-annamalai.html"
     },
     {
+      "source": "/admin",
+      "destination": "/admin.html"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

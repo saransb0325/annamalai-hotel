@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Admin – Hotel Annamalai</title>
+<!--
+  ADMIN PAGE (front end only). Connect it to your backend by setting API_BASE below.
+
+  Expected API (JSON). Every request sends:  Authorization: Bearer <admin key>
+  A 401 response sends the owner back to the login screen.
+
+  GET   {API_BASE}/api/orders          -> [ { id, ref, name, phone, type, items:[{name,qty,price}], total, status, createdAt } ]
+  GET   {API_BASE}/api/bookings        -> [ { id, ref, name, phone, room, rooms, checkIn, checkOut, addons:[string], total, status, createdAt } ]
+  PATCH {API_BASE}/api/orders/:id      body { "status": "..." }
+  PATCH {API_BASE}/api/bookings/:id    body { "status": "..." }
+
+  Order statuses:   new, preparing, ready, completed, cancelled
+  Booking statuses: new, confirmed, checked-in, completed, cancelled
+  createdAt: ISO date string. total: number in rupees.
+
+  This page cannot protect anything by itself. The backend MUST check the admin key on every request.
+-->
+<style>
+  :root{
+    --bg:#0f0e0c; --card:#161411; --line:#2a2520; --text:#e7e2d8; --muted:#9a9388;
+    --gold:#e5a93c; --gold2:#f6c453; --red:#c4412a; --green:#3fb37f; --blue:#5b9bd5;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-text-size-adjust:100%}
+  body{min-height:100vh;overflow-x:hidden}
+  button,input,select{font:inherit;color:inherit}
+  .wrap{max-width:960px;margin:0 auto;padding:16px}
+  h1{font-size:1.15rem;margin:0;color:var(--gold2);letter-spacing:.02em}
+  .hidden{display:none!important}
+
+  /* Login */
+  #login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}
+  .login-card{width:100%;max-width:360px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px}
+  .login-card h1{margin-bottom:4px}
+  .login-card p{color:var(--muted);font-size:.9rem;margin:0 0 16px}
+  input[type=password],input[type=search]{width:100%;padding:12px 14px;border-radius:12px;background:#0f0e0c;border:1px solid var(--line);outline:none}
+  input:focus{border-color:var(--gold)}
+  .btn{padding:12px 16px;border-radius:12px;border:0;background:linear-gradient(90deg,var(--gold2),var(--gold));color:#0f0e0c;font-weight:700;cursor:pointer;width:100%;margin-top:12px}
+  .btn.ghost{background:#201c17;color:var(--text);border:1px solid var(--line);width:auto;margin:0;padding:8px 14px;font-weight:600}
+  .err{color:#ff8a78;font-size:.85rem;margin-top:10px;min-height:1.2em}
+
+  /* Top bar */
+  header{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+  .bar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 16px;max-width:960px;margin:0 auto}
+  .bar .right{display:flex;gap:8px;align-items:center}
+  #updated{color:var(--muted);font-size:.75rem}
+  .btn.ghost{white-space:nowrap}
+  @media(max-width:480px){#updated{display:none}.bar h1{font-size:1rem}}
+
+  /* Stats */
+  .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:16px 0}
+  @media(min-width:640px){.stats{grid-template-columns:repeat(4,1fr)}}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
+  .stat b{display:block;font-size:1.4rem;color:var(--gold2)}
+  .stat span{font-size:.75rem;color:var(--muted)}
+
+  /* Tabs & filters */
+  .tabs{display:flex;gap:8px;margin-bottom:12px}
+  .tab{flex:1;padding:10px;border-radius:12px;background:var(--card);border:1px solid var(--line);cursor:pointer;font-weight:600;text-align:center}
+  .tab.on{background:var(--gold);color:#0f0e0c;border-color:var(--gold)}
+  .tab small{opacity:.8;font-weight:500}
+  .chips{display:flex;gap:6px;overflow-x:auto;padding:10px 0;scrollbar-width:none}
+  .chips::-webkit-scrollbar{display:none}
+  .chip{flex:0 0 auto;padding:6px 12px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:.8rem;cursor:pointer;color:var(--muted)}
+  .chip.on{border-color:var(--gold);color:var(--gold2)}
+
+  /* Cards */
+  .list{display:grid;gap:12px;margin-bottom:40px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;display:grid;gap:10px}
+  .card.fresh{border-color:var(--gold)}
+  .row{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+  .ref{font-family:ui-monospace,Menlo,monospace;color:var(--gold2);font-size:.85rem}
+  .name{font-weight:700;font-size:1rem}
+  .sub{color:var(--muted);font-size:.8rem}
+  .total{font-weight:700;color:var(--gold2);font-size:1.05rem;white-space:nowrap}
+  .lines{font-size:.88rem;color:#cfc8bb;display:grid;gap:2px}
+  .lines div{display:flex;justify-content:space-between;gap:10px}
+  .badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:.72rem;font-weight:700;text-transform:capitalize;border:1px solid currentColor}
+  .s-new{color:var(--gold2)} .s-preparing,.s-confirmed{color:var(--blue)} .s-ready,.s-checked-in{color:#b48be8}
+  .s-completed{color:var(--green)} .s-cancelled{color:#8a8378}
+  .actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .actions a{color:var(--text);text-decoration:none;padding:8px 12px;border-radius:10px;background:#201c17;border:1px solid var(--line);font-size:.82rem}
+  select{padding:8px 10px;border-radius:10px;background:#201c17;border:1px solid var(--line);font-size:.85rem;margin-left:auto}
+
+  .empty{text-align:center;color:var(--muted);padding:40px 16px;border:1px dashed var(--line);border-radius:16px}
+  .empty b{display:block;color:var(--text);margin-bottom:6px}
+  .toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#201c17;border:1px solid var(--gold);padding:10px 16px;border-radius:12px;font-size:.85rem;z-index:20}
+</style>
+</head>
+<body>
+
+<!-- Login -->
+<div id="login">
+  <form class="login-card" onsubmit="doLogin(event)">
+    <h1>Hotel Annamalai Admin</h1>
+    <p>Enter the admin key to see orders and bookings.</p>
+    <input id="key" type="password" placeholder="Admin key" autocomplete="current-password" required>
+    <button class="btn" type="submit">Sign in</button>
+    <div id="login-err" class="err"></div>
+  </form>
+</div>
+
+<!-- App -->
+<div id="app" class="hidden">
+  <header>
+    <div class="bar">
+      <h1>Annamalai Admin</h1>
+      <div class="right">
+        <span id="updated"></span>
+        <button class="btn ghost" onclick="load(true)">Refresh</button>
+        <button class="btn ghost" onclick="logout()">Sign out</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="stats">
+      <div class="stat"><b id="st-new-orders">0</b><span>New food orders</span></div>
+      <div class="stat"><b id="st-new-bookings">0</b><span>New room bookings</span></div>
+      <div class="stat"><b id="st-today">0</b><span>Received today</span></div>
+      <div class="stat"><b id="st-revenue">₹0</b><span>Today's value</span></div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab on" id="tab-orders" onclick="setTab('orders')">Food Orders <small id="n-orders"></small></button>
+      <button class="tab" id="tab-bookings" onclick="setTab('bookings')">Room Bookings <small id="n-bookings"></small></button>
+    </div>
+
+    <input type="search" id="q" placeholder="Search name, phone or reference" oninput="render()">
+    <div class="chips" id="chips"></div>
+
+    <div id="list" class="list"></div>
+  </main>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script>
+  // ---- Settings ----
+  const API_BASE = '';          // e.g. 'https://your-backend.example.com'. Empty = same site.
+  const REFRESH_MS = 30000;     // auto refresh every 30 seconds
+
+  const STATUSES = {
+    orders:   ['new', 'preparing', 'ready', 'completed', 'cancelled'],
+    bookings: ['new', 'confirmed', 'checked-in', 'completed', 'cancelled']
+  };
+
+  let tab = 'orders';
+  let filter = 'active';          // 'active' | 'all' | a status
+  let data = { orders: [], bookings: [] };
+  let seen = { orders: null, bookings: null };   // ids known before the latest refresh (to highlight new ones)
+  let fresh = new Set();
+  let timer = null;
+
+  const $ = id => document.getElementById(id);
+  const rs = n => '₹' + Number(n || 0).toLocaleString('en-IN');
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const store = {
+    get(){ try { return sessionStorage.getItem('ah_admin_key') || ''; } catch(e){ return window.__k || ''; } },
+    set(v){ try { sessionStorage.setItem('ah_admin_key', v); } catch(e){ window.__k = v; } },
+    clear(){ try { sessionStorage.removeItem('ah_admin_key'); } catch(e){ window.__k = ''; } }
+  };
+
+  function toast(msg){
+    const t = $('toast'); t.textContent = msg; t.classList.remove('hidden');
+    clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.add('hidden'), 2500);
+  }
+
+  async function api(path, opts = {}) {
+    const res = await fetch(API_BASE + path, {
+      ...opts,
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + store.get(), ...(opts.headers || {}) }
+    });
+    if (res.status === 401) { const e = new Error('unauthorized'); e.code = 401; throw e; }
+    if (!res.ok) throw new Error('Server error ' + res.status);
+    return res.json();
+  }
+
+  // ---- Login ----
+  async function doLogin(e) {
+    e.preventDefault();
+    store.set($('key').value.trim());
+    $('login-err').textContent = '';
+    try {
+      await fetchAll();
+      showApp();
+    } catch (err) {
+      store.clear();
+      $('login-err').textContent = err.code === 401 ? 'Wrong admin key.' : 'Cannot reach the server. Check the backend connection.';
+    }
+  }
+  function logout() {
+    store.clear(); clearInterval(timer);
+    $('app').classList.add('hidden'); $('login').classList.remove('hidden'); $('key').value = '';
+    seen = { orders: null, bookings: null };
+  }
+  function showApp() {
+    $('login').classList.add('hidden'); $('app').classList.remove('hidden');
+    render();
+    clearInterval(timer); timer = setInterval(() => load(false), REFRESH_MS);
+  }
+
+  // ---- Data ----
+  async function fetchAll() {
+    const [orders, bookings] = await Promise.all([api('/api/orders'), api('/api/bookings')]);
+    ['orders', 'bookings'].forEach(k => {
+      const list = k === 'orders' ? orders : bookings;
+      const ids = new Set(list.map(x => x.id));
+      if (seen[k]) list.forEach(x => { if (!seen[k].has(x.id)) fresh.add(k + x.id); });
+      seen[k] = ids;
+    });
+    data = { orders, bookings };
+    $('updated').textContent = 'Updated ' + new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+  }
+  async function load(manual) {
+    try {
+      const before = fresh.size;
+      await fetchAll();
+      render();
+      if (!manual && fresh.size > before) toast('New order or booking received');
+      if (manual) toast('Updated');
+    } catch (err) {
+      if (err.code === 401) return logout();
+      toast('Could not refresh');
+    }
+  }
+  async function setStatus(kind, id, status) {
+    try {
+      await api('/api/' + kind + '/' + encodeURIComponent(id), { method: 'PATCH', body: JSON.stringify({ status }) });
+      const item = data[kind].find(x => String(x.id) === String(id));
+      if (item) item.status = status;
+      fresh.delete(kind + id);
+      render();
+    } catch (err) {
+      if (err.code === 401) return logout();
+      toast('Could not save. Try again.');
+      render();
+    }
+  }
+
+  // ---- UI ----
+  function setTab(t) { tab = t; filter = 'active'; render(); }
+  function setFilter(f) { filter = f; render(); }
+
+  function isToday(iso) { return iso && new Date(iso).toDateString() === new Date().toDateString(); }
+
+  function render() {
+    $('tab-orders').classList.toggle('on', tab === 'orders');
+    $('tab-bookings').classList.toggle('on', tab === 'bookings');
+    $('n-orders').textContent = '(' + data.orders.length + ')';
+    $('n-bookings').textContent = '(' + data.bookings.length + ')';
+
+    // stats
+    $('st-new-orders').textContent = data.orders.filter(o => o.status === 'new').length;
+    $('st-new-bookings').textContent = data.bookings.filter(b => b.status === 'new').length;
+    const todayAll = [...data.orders, ...data.bookings].filter(x => isToday(x.createdAt) && x.status !== 'cancelled');
+    $('st-today').textContent = todayAll.length;
+    $('st-revenue').textContent = rs(todayAll.reduce((s, x) => s + Number(x.total || 0), 0));
+
+    // chips
+    const chips = [['active', 'Active'], ['all', 'All'], ...STATUSES[tab].map(s => [s, s])];
+    $('chips').innerHTML = chips.map(([v, label]) =>
+      `<button class="chip ${filter === v ? 'on' : ''}" onclick="setFilter('${v}')">${esc(label)}</button>`).join('');
+
+    // filter + search
+    const q = $('q').value.trim().toLowerCase();
+    let items = data[tab].slice().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    if (filter === 'active') items = items.filter(x => !['completed', 'cancelled'].includes(x.status));
+    else if (filter !== 'all') items = items.filter(x => x.status === filter);
+    if (q) items = items.filter(x => [x.name, x.phone, x.ref].some(v => String(v || '').toLowerCase().includes(q)));
+
+    $('list').innerHTML = items.length ? items.map(tab === 'orders' ? orderCard : bookingCard).join('') :
+      `<div class="empty"><b>Nothing here</b>${q ? 'No match for your search.' : 'New ' + (tab === 'orders' ? 'food orders' : 'room bookings') + ' will appear here.'}</div>`;
+  }
+
+  function statusSelect(kind, x) {
+    return `<select aria-label="Change status" onchange="setStatus('${kind}','${esc(x.id)}',this.value)">` +
+      STATUSES[kind].map(s => `<option value="${s}" ${x.status === s ? 'selected' : ''}>${s}</option>`).join('') + '</select>';
+  }
+  function contact(x) {
+    const p = String(x.phone || '').replace(/[^\d+]/g, '');
+    const wa = p.replace(/^\+/, '').replace(/^(\d{10})$/, '91$1');
+    return `<a href="tel:${esc(p)}">Call</a><a href="https://wa.me/${esc(wa)}" target="_blank" rel="noopener">WhatsApp</a>`;
+  }
+  function when(iso) {
+    return iso ? new Date(iso).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '';
+  }
+
+  function orderCard(o) {
+    const lines = (o.items || []).map(i => `<div><span>${esc(i.qty)} × ${esc(i.name)}</span><span>${rs(i.qty * i.price)}</span></div>`).join('');
+    return `<div class="card ${fresh.has('orders' + o.id) ? 'fresh' : ''}">
+      <div class="row"><div><div class="name">${esc(o.name)}</div><div class="sub">${esc(o.type)} · ${esc(when(o.createdAt))}</div></div>
+        <div style="text-align:right"><div class="total">${rs(o.total)}</div><span class="badge s-${esc(o.status)}">${esc(o.status)}</span></div></div>
+      <div class="lines">${lines}</div>
+      <div class="sub ref">${esc(o.ref)}</div>
+      <div class="actions">${contact(o)}${statusSelect('orders', o)}</div>
+    </div>`;
+  }
+  function bookingCard(b) {
+    const addons = (b.addons || []).length ? `<div class="sub">Add-ons: ${esc(b.addons.join(', '))}</div>` : '';
+    return `<div class="card ${fresh.has('bookings' + b.id) ? 'fresh' : ''}">
+      <div class="row"><div><div class="name">${esc(b.name)}</div><div class="sub">${esc(when(b.createdAt))}</div></div>
+        <div style="text-align:right"><div class="total">${rs(b.total)}</div><span class="badge s-${esc(b.status)}">${esc(b.status)}</span></div></div>
+      <div class="lines">
+        <div><span>Room</span><span>${esc(b.room)} × ${esc(b.rooms || 1)}</span></div>
+        <div><span>Check-in</span><span>${esc(b.checkIn)}</span></div>
+        <div><span>Check-out</span><span>${esc(b.checkOut)}</span></div>
+      </div>${addons}
+      <div class="sub ref">${esc(b.ref)}</div>
+      <div class="actions">${contact(b)}${statusSelect('bookings', b)}</div>
+    </div>`;
+  }
+
+  // Resume session in the same tab
+  (async function init() {
+    if (!store.get()) return;
+    try { await fetchAll(); showApp(); } catch (e) { store.clear(); }
+  })();
+</script>
+</body>
+</html>

@@ -10,6 +10,7 @@ if (!fs.existsSync('public/assets')) fs.mkdirSync('public/assets', { recursive: 
 const filesToCopy = [
   'index.html',
   'hotel-annamalai.html',
+  'admin.html',
   'ah-logo.png',
   'annamalai-branches.jpg',
   'annamalai-brand.png',
