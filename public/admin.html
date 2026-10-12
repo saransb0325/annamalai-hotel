@@ -89,6 +89,12 @@
   .actions a{color:var(--text);text-decoration:none;padding:8px 12px;border-radius:10px;background:#201c17;border:1px solid var(--line);font-size:.82rem}
   select{padding:8px 10px;border-radius:10px;background:#201c17;border:1px solid var(--line);font-size:.85rem;margin-left:auto}
 
+  @keyframes up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .card.fresh{animation:up .35s ease both}
+  .login-card{animation:up .45s ease both}
+  .tab,.chip,.btn,.actions a{transition:background .2s,border-color .2s,color .2s,transform .1s}
+  .btn:active,.tab:active{transform:scale(.97)}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
   .empty{text-align:center;color:var(--muted);padding:40px 16px;border:1px dashed var(--line);border-radius:16px}
   .empty b{display:block;color:var(--text);margin-bottom:6px}
   .toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#201c17;border:1px solid var(--gold);padding:10px 16px;border-radius:12px;font-size:.85rem;z-index:20}
