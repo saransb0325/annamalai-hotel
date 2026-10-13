@@ -5,6 +5,7 @@
   "description": "Annamalai Hotel Residency - Luxury Hospitality Website",
   "scripts": {
     "build": "node build.js",
-    "start": "node build.js"
+    "start": "node build.js",
+    "test": "node --test decisions-helper.test.js inject-motion.test.js"
   }
 }

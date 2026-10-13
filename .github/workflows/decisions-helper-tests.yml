@@ -1,4 +1,4 @@
-name: Decisions helper tests
+name: Project checks
 
 on:
   pull_request:
@@ -7,21 +7,28 @@ on:
     paths:
       - 'decisions-helper.js'
       - 'decisions-helper.test.js'
+      - 'inject-motion.js'
+      - 'inject-motion.test.js'
+      - 'ui-motion.css'
+      - 'ui-motion.js'
+      - 'build.js'
+      - 'package.json'
+      - 'vercel.json'
       - '.github/workflows/decisions-helper-tests.yml'
   push:
     branches:
-      - feat/gpt-6-luna-decisions
+      - feat/hotel-ui-motion
 
 jobs:
-  unit-tests:
-    name: Unit tests (mocked API)
+  checks:
+    name: Build and mocked tests
     runs-on: ubuntu-latest
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Run mocked tests (no live API call)
-        run: node --test decisions-helper.test.js
+      - name: Build static output
+        run: npm run build
+      - name: Test helpers (no live API call)
+        run: npm test

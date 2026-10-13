@@ -1,11 +1,11 @@
 const fs = require('fs');
 const path = require('path');
+const { injectMotion } = require('./inject-motion');
 
 // Ensure directories exist
-if (!fs.existsSync('dist')) fs.mkdirSync('dist', { recursive: true });
-if (!fs.existsSync('dist/assets')) fs.mkdirSync('dist/assets', { recursive: true });
-if (!fs.existsSync('public')) fs.mkdirSync('public', { recursive: true });
-if (!fs.existsSync('public/assets')) fs.mkdirSync('public/assets', { recursive: true });
+for (const dir of ['dist', 'dist/assets', 'public', 'public/assets']) {
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+}
 
 const filesToCopy = [
   'index.html',
@@ -15,7 +15,9 @@ const filesToCopy = [
   'annamalai-branches.jpg',
   'annamalai-brand.png',
   'temple-hero-bg.jpg',
-  'arunachala-bg.jpg'
+  'arunachala-bg.jpg',
+  'ui-motion.css',
+  'ui-motion.js'
 ];
 
 filesToCopy.forEach(file => {
@@ -26,11 +28,23 @@ filesToCopy.forEach(file => {
   }
 });
 
-// Copy assets
+// Copy existing public assets for builds that use dist.
 if (fs.existsSync('public/assets')) {
   fs.readdirSync('public/assets').forEach(file => {
     fs.copyFileSync(path.join('public/assets', file), path.join('dist/assets', file));
   });
 }
 
-console.log('Build complete! All files synchronized to root, dist, and public.');
+// Inject only into build output; tracked source HTML remains untouched.
+// The operation is idempotent so repeated builds do not duplicate tags.
+for (const outputDir of ['dist', 'public']) {
+  for (const file of ['index.html', 'hotel-annamalai.html', 'admin.html']) {
+    const target = path.join(outputDir, file);
+    if (!fs.existsSync(target)) continue;
+    const html = fs.readFileSync(target, 'utf8');
+    const enhanced = injectMotion(html);
+    if (enhanced !== html) fs.writeFileSync(target, enhanced, 'utf8');
+  }
+}
+
+console.log('Build complete! HTML output includes optional accessible motion assets.');
