@@ -8,20 +8,20 @@ function injectMotion(html) {
   if (html.includes('data-hotel-motion-assets')) return html;
 
   let output = html;
-  if (/<\\/head\\s*>/i.test(output)) {
-    output = output.replace(/<\\/head\\s*>/i, CSS_TAG + '\\n</head>');
-  } else if (/<body\\b[^>]*>/i.test(output)) {
-    output = output.replace(/<body\\b[^>]*>/i, match => match + '\\n' + CSS_TAG);
+  if (/<\/head\s*>/i.test(output)) {
+    output = output.replace(/<\/head\s*>/i, CSS_TAG + '\n</head>');
+  } else if (/<body\b[^>]*>/i.test(output)) {
+    output = output.replace(/<body\b[^>]*>/i, match => match + '\n' + CSS_TAG);
   } else {
-    output = CSS_TAG + '\\n' + output;
+    output = CSS_TAG + '\n' + output;
   }
 
-  if (/<\\/body\\s*>/i.test(output)) {
-    output = output.replace(/<\\/body\\s*>/i, JS_TAG + '\\n</body>');
-  } else if (/<\\/html\\s*>/i.test(output)) {
-    output = output.replace(/<\\/html\\s*>/i, JS_TAG + '\\n</html>');
+  if (/<\/body\s*>/i.test(output)) {
+    output = output.replace(/<\/body\s*>/i, JS_TAG + '\n</body>');
+  } else if (/<\/html\s*>/i.test(output)) {
+    output = output.replace(/<\/html\s*>/i, JS_TAG + '\n</html>');
   } else {
-    output += '\\n' + JS_TAG + '\\n';
+    output += '\n' + JS_TAG + '\n';
   }
   return output;
 }
