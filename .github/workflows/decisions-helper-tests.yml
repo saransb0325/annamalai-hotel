@@ -7,6 +7,8 @@ on:
     paths:
       - 'decisions-helper.js'
       - 'decisions-helper.test.js'
+      - 'antigravity-decisions-mcp.js'
+      - 'ANTIGRAVITY_SETUP.md'
       - '.github/workflows/decisions-helper-tests.yml'
   push:
     branches:
