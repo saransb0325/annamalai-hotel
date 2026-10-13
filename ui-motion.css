@@ -1,0 +1,96 @@
+/* Lightweight, dependency-free premium transitions for the hotel site. */
+:root {
+  --hotel-motion-gold: var(--accent-color, #c69a52);
+  --hotel-motion-ease: cubic-bezier(.22, 1, .36, 1);
+}
+
+html { scroll-behavior: smooth; }
+
+a, button, [role="button"], input, select, textarea {
+  transition:
+    color 220ms ease,
+    background-color 220ms ease,
+    border-color 220ms ease,
+    box-shadow 260ms ease,
+    opacity 220ms ease,
+    translate 260ms var(--hotel-motion-ease),
+    scale 180ms ease;
+}
+
+button:hover, [role="button"]:hover {
+  translate: 0 -2px;
+}
+
+button:active, [role="button"]:active {
+  translate: 0 0;
+  scale: .985;
+}
+
+a:focus-visible, button:focus-visible, [role="button"]:focus-visible,
+input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--hotel-motion-gold);
+  outline-offset: 3px;
+}
+
+:where([class*="card"], [class*="room"], [class*="branch"], [class*="service"], article) {
+  transition:
+    box-shadow 320ms var(--hotel-motion-ease),
+    border-color 260ms ease,
+    translate 320ms var(--hotel-motion-ease);
+}
+
+:where([class*="card"], [class*="room"], [class*="branch"], [class*="service"], article):hover {
+  translate: 0 -3px;
+}
+
+:where(a, [class*="card"], [class*="room"], [class*="branch"], [class*="gallery"]) img {
+  transition: scale 650ms var(--hotel-motion-ease), filter 450ms ease;
+  transform-origin: center;
+}
+
+:where(a, [class*="card"], [class*="room"], [class*="branch"], [class*="gallery"]):hover img {
+  scale: 1.025;
+}
+
+.hotel-motion-reveal {
+  opacity: 0;
+  translate: 0 18px;
+  transition:
+    opacity 650ms var(--hotel-motion-ease),
+    translate 650ms var(--hotel-motion-ease);
+  transition-delay: var(--hotel-motion-delay, 0ms);
+  will-change: opacity, translate;
+}
+
+.hotel-motion-reveal.is-visible {
+  opacity: 1;
+  translate: 0 0;
+}
+
+#hotel-motion-progress {
+  position: fixed;
+  inset: 0 auto auto 0;
+  width: 0;
+  height: 3px;
+  z-index: 2147483000;
+  pointer-events: none;
+  background: linear-gradient(90deg, #a97932, #e6c783, #fff0c2);
+  box-shadow: 0 0 10px rgb(198 154 82 / 32%);
+  transition: width 80ms linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    transition-delay: 0ms !important;
+  }
+  .hotel-motion-reveal {
+    opacity: 1 !important;
+    translate: none !important;
+    will-change: auto;
+  }
+}
