@@ -94,3 +94,261 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
     will-change: auto;
   }
 }
+
+
+/* ==========================================
+   Premium hospitality polish: brass, glass,
+   soft depth and controlled motion.
+   ========================================== */
+:root {
+  --hotel-ink: #0f0e0c;
+  --hotel-panel: #171310;
+  --hotel-brass: #e5a93c;
+  --hotel-champagne: #f6c453;
+  --hotel-cream: #fff0d0;
+  --hotel-ease: cubic-bezier(.2, .8, .2, 1);
+}
+
+#main-header {
+  transition: box-shadow 340ms var(--hotel-ease), background-color 340ms ease;
+}
+
+#navbar-bar {
+  transition: background-color 340ms ease, border-color 340ms ease, box-shadow 340ms ease;
+}
+
+#main-header.is-scrolled #navbar-bar {
+  background: rgb(15 14 12 / 91%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(145%);
+  backdrop-filter: blur(24px) saturate(145%);
+  border-bottom-color: rgb(229 169 60 / 42%) !important;
+  box-shadow: 0 14px 36px rgb(0 0 0 / 30%), 0 1px 0 rgb(246 196 83 / 8%);
+}
+
+#main-header.is-scrolled .header-logo-box {
+  box-shadow: 0 0 0 1px rgb(246 196 83 / 22%), 0 5px 22px rgb(229 169 60 / 18%);
+}
+
+#navbar-bar a[href^="#"] {
+  position: relative;
+  text-decoration: none;
+  text-underline-offset: 7px;
+}
+
+#navbar-bar a[href^="#"]::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -5px;
+  height: 1px;
+  border-radius: 99px;
+  background: linear-gradient(90deg, transparent, var(--hotel-champagne), transparent);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 280ms var(--hotel-ease);
+}
+
+#navbar-bar a[href^="#"]:hover::after,
+#navbar-bar a[href^="#"].is-current-section::after {
+  transform: scaleX(1);
+}
+
+#navbar-bar a.is-current-section {
+  color: var(--hotel-champagne) !important;
+}
+
+.hero-container::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: .8;
+  background: radial-gradient(
+    ellipse 42% 34% at var(--hero-pointer-x, 50%) var(--hero-pointer-y, 42%),
+    rgb(229 169 60 / 10%),
+    transparent 78%
+  );
+  mix-blend-mode: screen;
+}
+
+.hero-bg-img {
+  animation: ah-hero-drift 28s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+@keyframes ah-hero-drift {
+  from { transform: scale(1.045) translate3d(0, 0, 0); }
+  to { transform: scale(1.105) translate3d(0, -0.7%, 0); }
+}
+
+.hero-container .text-gold-gradient {
+  background-size: 180% 180%;
+  animation: ah-gold-flow 13s ease-in-out infinite alternate;
+}
+
+@keyframes ah-gold-flow {
+  from { background-position: 0% 50%; }
+  to { background-position: 100% 50%; }
+}
+
+.hero-container .inline-flex.rounded-full {
+  box-shadow: 0 0 0 1px rgb(246 196 83 / 7%), 0 12px 40px rgb(0 0 0 / 16%);
+}
+
+.hero-container .hero-cta-btn-wrap button {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  box-shadow: 0 12px 34px rgb(229 169 60 / 18%), 0 0 0 1px rgb(255 240 208 / 35%);
+  transition: translate 280ms var(--hotel-ease), box-shadow 300ms ease, filter 280ms ease;
+}
+
+.hero-container .hero-cta-btn-wrap button::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -20% auto -20% -45%;
+  width: 34%;
+  transform: skewX(-18deg);
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 47%), transparent);
+  transition: left 700ms var(--hotel-ease);
+}
+
+.hero-container .hero-cta-btn-wrap button:hover {
+  translate: 0 -3px;
+  filter: saturate(1.08) brightness(1.04);
+  box-shadow: 0 18px 42px rgb(229 169 60 / 29%), 0 0 0 1px rgb(255 240 208 / 50%);
+}
+
+.hero-container .hero-cta-btn-wrap button:hover::before {
+  left: 125%;
+}
+
+#accommodations .responsive-card-grid > div,
+#amenities .grid > div,
+#dining-banquets .grid > div {
+  position: relative;
+  isolation: isolate;
+  background-image: radial-gradient(
+    340px circle at var(--card-x, 50%) var(--card-y, 50%),
+    rgb(246 196 83 / 7%),
+    transparent 66%
+  );
+  box-shadow: 0 14px 38px rgb(0 0 0 / 15%);
+  transition:
+    translate 360ms var(--hotel-ease),
+    box-shadow 360ms ease,
+    border-color 300ms ease,
+    background-color 300ms ease;
+}
+
+#accommodations .responsive-card-grid > div:hover,
+#amenities .grid > div:hover,
+#dining-banquets .grid > div:hover {
+  translate: 0 -7px;
+  border-color: rgb(246 196 83 / 62%) !important;
+  box-shadow: 0 24px 52px rgb(0 0 0 / 36%), 0 0 0 1px rgb(229 169 60 / 10%);
+}
+
+#about-tradition img,
+#location-contact img,
+#split-gallery-window img {
+  transition: scale 700ms var(--hotel-ease), filter 500ms ease;
+}
+
+#about-tradition img:hover,
+#location-contact img:hover {
+  scale: 1.018;
+  filter: saturate(1.07);
+}
+
+#branches .max-w-5xl > div {
+  transition: translate 330ms var(--hotel-ease), filter 300ms ease;
+}
+
+#branches .max-w-5xl > div:hover {
+  translate: 0 -4px;
+  filter: brightness(1.06);
+}
+
+#accommodations .text-center h2::after,
+#amenities .text-center h2::after,
+#dining-banquets .text-center h2::after,
+#about-tradition .text-center h2::after,
+#location-contact .text-center h2::after,
+#branches .text-center h2::after {
+  content: "";
+  display: block;
+  width: 76px;
+  height: 2px;
+  margin: 17px auto 0;
+  border-radius: 99px;
+  background: linear-gradient(90deg, transparent, var(--hotel-brass), var(--hotel-cream), var(--hotel-brass), transparent);
+  box-shadow: 0 0 18px rgb(229 169 60 / 18%);
+}
+
+#booking-modal > div,
+#book-choice-modal > div,
+#food-order-modal > div,
+#split-gallery-window > div {
+  transform-origin: center;
+}
+
+#booking-modal:not(.hidden) > div,
+#book-choice-modal:not(.hidden) > div,
+#food-order-modal:not(.hidden) > div,
+#split-gallery-window:not(.hidden) > div {
+  animation: ah-modal-rise 360ms var(--hotel-ease) both;
+}
+
+@keyframes ah-modal-rise {
+  from { opacity: 0; transform: translate3d(0, 14px, 0) scale(.985); }
+  to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+
+#contact-form input,
+#contact-form textarea,
+#booking-modal input,
+#booking-modal select,
+#food-order-modal input,
+#food-order-modal select {
+  transition: border-color 220ms ease, box-shadow 220ms ease, background-color 220ms ease;
+}
+
+#contact-form input:focus,
+#contact-form textarea:focus,
+#booking-modal input:focus,
+#booking-modal select:focus,
+#food-order-modal input:focus,
+#food-order-modal select:focus {
+  outline: none;
+  border-color: rgb(246 196 83 / 76%);
+  box-shadow: 0 0 0 3px rgb(229 169 60 / 12%);
+}
+
+@media (hover: none), (pointer: coarse) {
+  #accommodations .responsive-card-grid > div:hover,
+  #amenities .grid > div:hover,
+  #dining-banquets .grid > div:hover,
+  #branches .max-w-5xl > div:hover {
+    translate: none;
+  }
+  .hero-bg-img { animation-duration: 42s; }
+}
+
+@media (max-width: 640px) {
+  .hero-bg-img { animation-duration: 36s; }
+  #main-header.is-scrolled #navbar-bar { box-shadow: 0 8px 24px rgb(0 0 0 / 26%); }
+  #accommodations .responsive-card-grid > div:hover,
+  #amenities .grid > div:hover,
+  #dining-banquets .grid > div:hover { box-shadow: 0 15px 30px rgb(0 0 0 / 24%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-bg-img,
+  .hero-container .text-gold-gradient { animation: none !important; }
+  .hero-container .hero-cta-btn-wrap button::before { display: none !important; }
+  .hero-container::after { display: none !important; }
+}
