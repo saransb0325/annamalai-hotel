@@ -68,9 +68,105 @@
     update();
   }
 
+
+  // Compact the navigation after leaving the hero's first few pixels.
+  function setupHeaderState() {
+    var header = document.getElementById('main-header');
+    if (!header) return;
+    var scheduled = false;
+    function update() {
+      header.classList.toggle('is-scrolled', window.scrollY > 28);
+      scheduled = false;
+    }
+    function onScroll() {
+      if (scheduled) return;
+      scheduled = true;
+      requestAnimationFrame(update);
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    update();
+  }
+
+  // A very subtle pointer-following light on the hero; no 3D transform is applied.
+  function setupHeroSpotlight() {
+    if (reducedMotion || !window.matchMedia ||
+        !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    var hero = document.querySelector('.hero-container');
+    if (!hero) return;
+    var rect = null;
+    hero.addEventListener('pointermove', function (event) {
+      rect = hero.getBoundingClientRect();
+      var x = Math.max(0, Math.min(100, ((event.clientX - rect.left) / rect.width) * 100));
+      var y = Math.max(0, Math.min(100, ((event.clientY - rect.top) / rect.height) * 100));
+      hero.style.setProperty('--hero-pointer-x', x.toFixed(1) + '%');
+      hero.style.setProperty('--hero-pointer-y', y.toFixed(1) + '%');
+    }, { passive: true });
+    hero.addEventListener('pointerleave', function () {
+      hero.style.setProperty('--hero-pointer-x', '50%');
+      hero.style.setProperty('--hero-pointer-y', '42%');
+    }, { passive: true });
+  }
+
+  // Track pointer position for the soft gold lighting on room and amenity cards.
+  function setupCardSpotlights() {
+    if (reducedMotion || !window.matchMedia ||
+        !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    var selector = '#accommodations .responsive-card-grid > div, ' +
+      '#amenities .grid > div, #dining-banquets .grid > div';
+    document.querySelectorAll(selector).forEach(function (card) {
+      card.addEventListener('pointermove', function (event) {
+        var rect = card.getBoundingClientRect();
+        var x = Math.max(0, Math.min(100, ((event.clientX - rect.left) / rect.width) * 100));
+        var y = Math.max(0, Math.min(100, ((event.clientY - rect.top) / rect.height) * 100));
+        card.style.setProperty('--card-x', x.toFixed(1) + '%');
+        card.style.setProperty('--card-y', y.toFixed(1) + '%');
+      }, { passive: true });
+      card.addEventListener('pointerleave', function () {
+        card.style.setProperty('--card-x', '50%');
+        card.style.setProperty('--card-y', '50%');
+      }, { passive: true });
+    });
+  }
+
+  // Give the desktop nav a restrained active-section marker.
+  function setupActiveNavigation() {
+    if (!('IntersectionObserver' in window)) return;
+    var anchors = Array.prototype.slice.call(
+      document.querySelectorAll('#navbar-bar a[href^="#"]')
+    ).filter(function (anchor) {
+      var href = anchor.getAttribute('href');
+      return href && href.length > 1 && document.getElementById(href.slice(1));
+    });
+    if (!anchors.length) return;
+
+    var sections = anchors.map(function (anchor) {
+      return document.getElementById(anchor.getAttribute('href').slice(1));
+    }).filter(function (section, index, list) {
+      return section && list.indexOf(section) === index;
+    });
+    var observer = new IntersectionObserver(function (entries) {
+      var visible = entries.filter(function (entry) { return entry.isIntersecting; });
+      if (!visible.length) return;
+      visible.sort(function (a, b) {
+        return Math.abs(a.boundingClientRect.top - window.innerHeight * 0.36) -
+          Math.abs(b.boundingClientRect.top - window.innerHeight * 0.36);
+      });
+      var activeId = visible[0].target.id;
+      anchors.forEach(function (anchor) {
+        anchor.classList.toggle('is-current-section',
+          anchor.getAttribute('href') === '#' + activeId);
+      });
+    }, { rootMargin: '-18% 0px -62% 0px', threshold: 0 });
+    sections.forEach(function (section) { observer.observe(section); });
+  }
+
   function init() {
     doc.classList.add('hotel-motion-enhanced');
     setupReveal();
+    setupHeaderState();
+    setupActiveNavigation();
+    setupHeroSpotlight();
+    setupCardSpotlights();
     if (!reducedMotion && document.body) setupScrollProgress();
   }
 
