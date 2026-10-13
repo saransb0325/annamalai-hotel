@@ -1,0 +1,27 @@
+name: Decisions helper tests
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'decisions-helper.js'
+      - 'decisions-helper.test.js'
+      - '.github/workflows/decisions-helper-tests.yml'
+  push:
+    branches:
+      - feat/gpt-6-luna-decisions
+
+jobs:
+  unit-tests:
+    name: Unit tests (mocked API)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Run mocked tests (no live API call)
+        run: node --test decisions-helper.test.js
